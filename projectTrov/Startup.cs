@@ -16,8 +16,6 @@ namespace projectTrov
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-
         }
 
         public IConfiguration Configuration { get; }
@@ -25,7 +23,8 @@ namespace projectTrov
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
+            services.AddCors(options => options.AddDefaultPolicy(builder =>
+                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
             //Injecting the in memory database with our Default Context as a databse structure
             services.AddDbContext<DefaultContext>( option=> option.UseInMemoryDatabase(databaseName: "database_name"));
 
@@ -66,11 +65,8 @@ namespace projectTrov
 
             app.UseRouting();
 
-            app.UseCors(options => options
-                        .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowAnyOrigin());
-            app.UseHttpsRedirection();
+            app.UseCors();
+
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
 

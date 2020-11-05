@@ -27,7 +27,6 @@ const setLoading = (toggle)=>{
 const retrieveIncidents = async ()=>{
     setLoading();
     debugger;
-    axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
     axios.get("http://localhost:5000/Incident")
     .then(function(response){
         debugger;
