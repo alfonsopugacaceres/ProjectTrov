@@ -1,0 +1,55 @@
+.IncidentGrid{
+
+}
+
+.IncidentHeader{
+    text-align: center;
+}
+
+.IncidentGridRow{
+    transition: all 1s ease-in-out;
+}
+
+.IncidentGridRow:hover{
+    background-color:lightblue;
+    transition: all 1s ease-in;
+}
+
+.IncidentAddWrapper_show{
+    transition: width 2s ease-in, opacity 0.5s ease-in, height 2s ease-in;
+    opacity: 1;
+    width: 100%;
+    height: unset;
+}
+.IncidentAddWrapper_show textarea{
+    resize: none;
+}
+
+.IncidentAddWrapper_hide{
+    transition: width 1s ease-in, opacity 0.5s ease-in, height 1s ease-in;
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+}
+
+.IncidentAddWrapper_hide textarea{
+    resize: none;
+}
+
+.IncidentSpinner{
+
+}
+
+.IncidentLoading_show{
+    transition: all 1s ease-in;
+    opacity: 1;
+    width: 100%;
+    height: unset;
+}
+
+.IncidentLoading_hide{
+    transition: all 1s ease-out;
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+}
