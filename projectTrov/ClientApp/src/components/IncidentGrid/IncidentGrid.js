@@ -1,26 +1,28 @@
-import React, {useState, useContext, useEffect} from "react";
-import {Row, Col, Container, Jumbotron, Form, Button, Spinner} from "react-bootstrap";
+import React, {useState, useContext, useEffect, Fragment} from "react";
+import {Row, Col, Container, Jumbotron, Form, Button} from "react-bootstrap";
 import PropTypes from "prop-types";
 import IncidentGridContext from "./Context/IncidentGridContext";
+import AppLoading from "../AppLoading/AppLoading";
 import "./IncidentGrid.css";
 
 const IncidentGridRow = ({ IncidentData }) =>{
 
+    debugger;
     const {
-        Id,
-        Vin,
-        IncidentDate,
-        MakeModel,
-        VinYear
+        id,
+        vin,
+        incidentDate,
+        makeModel,
+        vinYear
     } = IncidentData;
 
     return(
         <Row className="IncidentGridRow">
-            <Col md={1}>{Id}</Col>
-            <Col md={3}>{Vin}</Col>
-            <Col md={3}>{IncidentDate}</Col>
-            <Col md={3}>{MakeModel}</Col>
-            <Col md={2}>{VinYear}</Col>
+            <Col md={1}><label>{id}</label></Col>
+            <Col md={3}><label>{vin}</label></Col>
+            <Col md={3}><label>{incidentDate}</label></Col>
+            <Col md={3}><label>{makeModel}</label></Col>
+            <Col md={2}><label>{vinYear}</label></Col>
         </Row>
     );
 }
@@ -77,47 +79,13 @@ const IcidentInsert = ()=>{
     );
 }
 
-
-const IncidentGrid = ({IncidentGrid})=>{
-
-    const {
-        IncidentGridHeader,
-        IncidentGridData
-    } = IncidentGrid;
-    
-    const {
-        Incidents,
-        Loading,
-        ErrorPresent,
-        ErrorText,
-        setLoading,
-        retrieveIncidents,
-        setError,
-        clearError} = useContext(IncidentGridContext);
-
-    useEffect(()=>{
-        if(Incidents === null && Loading == true){
-            debugger;
-            retrieveIncidents();
-        }
-    },[Loading, Incidents]);//useEffect is tracking Loading and Incidents to determine whether or not to rerender
-
-
+const IncidentGridBody =({IncidentGridData})=>{
+    debugger;
     return(
-        <Container>
+        <Container fluid={true}>
             <Row>
                 <Col md={12}>
-                    <Jumbotron>
-                        <h1 className="IncidentHeader">{IncidentGridHeader}</h1>
-                    </Jumbotron>
-                </Col>
-            </Row>
-            {/* <Row>
-                <Col md={12}>
-                    <Container className={(Loading) ? "IncidentLoading_show" : "IncidentLoading_hide"}>
-                        <Spinner animation="grow" className="IncidentSpinner"></Spinner>
-                    </Container>
-                    <Container fluid={true} className={(!Loading) ? "IncidentLoading_show" : "IncidentLoading_hide"}>
+                    <Container fluid={true} className="IncidentLoading_show">
                         <Row>
                             <Col md={12}>
                                 <Container fluid={true}>
@@ -130,7 +98,7 @@ const IncidentGrid = ({IncidentGrid})=>{
                                 <Container fluid={true}>
                                     {
                                         IncidentGridData.map(
-                                            (Incident)=>(<IncidentGridRow key={Incident.Id} IncidentData={Incident}></IncidentGridRow>)
+                                            (Incident)=>(<IncidentGridRow key={Incident.id} IncidentData={Incident}></IncidentGridRow>)
                                         )
                                     }
                                 </Container>
@@ -138,7 +106,63 @@ const IncidentGrid = ({IncidentGrid})=>{
                         </Row>
                     </Container>
                 </Col>
-            </Row> */}
+            </Row> 
+        </Container>
+    );
+}
+
+const IncidentGrid = ({IncidentGrid})=>{
+
+    const {
+        IncidentGridHeader,
+        IncidentGridData
+    } = IncidentGrid;
+    
+    const {
+        Incidents,
+        Loading,
+        DataSeeded,
+        ErrorPresent,
+        ErrorText,
+        setLoading,
+        retrieveIncidents,
+        setError,
+        clearError,
+        seedData} = useContext(IncidentGridContext);
+
+    //Useeffect hook is set up in a way to facilitate the original Seeding of data, then launching a data retrieval 
+    //to populate the grid
+    useEffect(()=>{
+        debugger;
+        if(Incidents === null && DataSeeded === false && Loading === true){
+            seedData();
+        }
+        else if(Incidents === null && Loading === true){
+            retrieveIncidents();
+        }
+    },[DataSeeded, Loading, Incidents]);//useEffect is tracking Loading and Incidents to determine whether or not to rerender
+
+    debugger;
+    return(
+        <Container>
+            <Row>
+                <Col md={12}>
+                    <Jumbotron>
+                        <h1 className="IncidentHeader">{IncidentGridHeader}</h1>
+                    </Jumbotron>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={12}>
+                {
+                    (Loading)
+                    ?
+                    <AppLoading></AppLoading>
+                    :
+                    <IncidentGridBody IncidentGridData={Incidents}></IncidentGridBody>
+                }
+            </Col>
+        </Row>
         </Container>
 
     );

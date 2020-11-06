@@ -2,10 +2,11 @@ import React, {useReducer} from "react";
 import IncidentGridContext from "./IncidentGridContext";
 import IncidentGridReducer from "./IncidentGridReducer";
 import {
-    SET_INCEDENTS,
+    SET_INCIDENTS,
     SET_LOADING,
     SET_ERROR,
-    CLEAR_ERROR
+    CLEAR_ERROR,
+    SEED_DATA
 } from "./IncidentTypes";
 import axios from "axios";
 
@@ -15,9 +16,34 @@ const IncidentGridState = (props)=>{
         ErrorText: null,            //error text to display
         Loading: true,              //state variable to control loading behavior
         ErrorPresent: false,        //state variable controlling error behavior
+        DataSeeded: false           //I am using this state to determine of the data is seeded or not
     }
 
 
+//I created this functions to seed data into the in memory database. I was 
+//having tons of issues with my project set up these past few days and I just
+//needed to get the project going
+const seedData = ()=>{
+
+    const seedData = [
+        {Id : 0, Vin : "JTKDE177160124954", VinYear : "2006", MakeModel : "TOYOTA", Note : "Bumper crash"},
+        {Id : 0, Vin : "2GCEK13TX51128592", VinYear : "2005", MakeModel : "CHEVROLET", Note : "Rear end crash"},
+        {Id : 0, Vin : "3B6MC3667XM554105", VinYear : "1999", MakeModel : "DODGE", Note : "Broken window"},
+        {Id : 0, Vin : "5J8TB4H52FL000489", VinYear : "2015", MakeModel : "ACURA", Note : "Stolen"},
+        {Id : 0, Vin : "1GNEC13V44R194325", VinYear : "2004", MakeModel : "CHEVROLET", Note : "Fell off a bridge"}
+    ]
+
+    //use axios to post a request to seed data into the in memory database so we have something to display on load
+    axios.post(
+        "http://localhost:5000/Incident/Seed", seedData, {"Content-type":"application/json"})
+    .then(function(response){
+        dispatch({type:SEED_DATA});
+    })
+    .catch(function(error){
+        setError({ErrorText: "There was an issue seeding data to the in memory database"});
+    });
+
+}
 const [state, dispatch] = useReducer(IncidentGridReducer, initialState)//attaching the state to the IncidentGridReducer
 
 const setLoading = (toggle)=>{
@@ -25,16 +51,14 @@ const setLoading = (toggle)=>{
 }
 
 const retrieveIncidents = async ()=>{
-    setLoading();
-    debugger;
+    if(!state.Loading)
+        setLoading();
     axios.get("http://localhost:5000/Incident")
     .then(function(response){
-        debugger;
-        dispatch({type:SET_INCEDENTS, payload: response});
+        dispatch({type:SET_INCIDENTS, payload: response});
     })
     .catch(function(error){
-        debugger;
-        setError(error)
+        setError({ErrorText: "There was an issue retrieving data from the database"});
     });
 }
 
@@ -55,10 +79,12 @@ const clearError = ()=>{
             Loading: state.Loading,
             ErrorPresent: state.ErrorPresent,
             ErrorText: state.ErrorText,
+            DataSeeded: state.DataSeeded,
             setLoading,
             retrieveIncidents,
             setError,
-            clearError
+            clearError,
+            seedData
         }}
     >
         {props.children}

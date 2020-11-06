@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 
+namespace AppModels{
 public class NHTSResult{
         public string Value { get; set; }
         public string ValueId { get; set; }
@@ -13,5 +14,7 @@ public class NHTSResponse{
         public string Message { get; set; } 
         public string SearchCriteria { get; set; } 
         public IList<NHTSResult> Results {get;set;}
+
+}
 
 }

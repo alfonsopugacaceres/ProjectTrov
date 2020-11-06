@@ -32,12 +32,7 @@ const LandingPage = ()=>{
         
 
     },[])
-
-
     
-
-
-    debugger;
     return(
         <Container>
             <Row>

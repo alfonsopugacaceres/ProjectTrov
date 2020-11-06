@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Context;
-using Models;
+using AppModels;
 
 namespace projectTrov
 {
@@ -52,16 +52,6 @@ namespace projectTrov
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            //   services.AddCors(options=>{
-            //     options.AddPolicy(
-            //         name:LocalHostOrigin,
-            //         builder=>{
-            //             builder.WithOrigins("http://localhost:3000", "http://localhost:5000", "https://localhost:5001")
-            //             .AllowAnyMethod()
-            //             .AllowAnyHeader()
-            //             .AllowAnyOrigin();
-            //         }); 
-            // });
 
             app.UseRouting();
 
@@ -87,28 +77,6 @@ namespace projectTrov
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
-        }
-
-        private static void DefaultData(DefaultContext context){
-            var  entry1 = new Incident{
-                Id = 1,
-                Vin = string.Empty,
-                IncidentDate = string.Empty,
-                Note = string.Empty, 
-                MakeModel = string.Empty,
-                VinYear = string.Empty
-            };
-            context.Add(entry1);
-            var  entry2 = new Incident{
-                Id = 2,
-                Vin = string.Empty,
-                IncidentDate = string.Empty,
-                Note = string.Empty, 
-                MakeModel = string.Empty,
-                VinYear = string.Empty
-            };
-            context.Add(entry1);
-            context.SaveChanges();
         }
     }
 
