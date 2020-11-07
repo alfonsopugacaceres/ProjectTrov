@@ -6,15 +6,6 @@
     text-align: center;
 }
 
-.IncidentGridRow{
-    transition: all 1s ease-in-out;
-}
-
-.IncidentGridRow:hover{
-    background-color:lightblue;
-    transition: all 1s ease-in;
-}
-
 .IncidentAddWrapper_show{
     transition: width 2s ease-in, opacity 0.5s ease-in, height 2s ease-in;
     opacity: 1;
@@ -52,4 +43,56 @@
     opacity: 0;
     width: 0px;
     height: 0px;
+}
+
+.IncidentGridRow{
+    transition: all 0.5s ease-in-out;
+}
+
+.IncidentGridRow:hover{
+    background-color:lightblue;
+    transition: all 0/5s ease-in;
+}
+
+.IncidentGridRowSpacing{
+    padding-right:1%;
+}
+
+.IncidentGridRowVin{
+    width: 20%;
+}
+.IncidentGridRowDt{
+    width: 15%;
+}
+.IncidentGridRowMake{
+    width: 10%;
+
+}
+.IncidentGridRowModel{
+    width: 15%;
+
+}
+.IncidentGridRowYear{
+    width: 5%;
+
+}
+.IncidentGridRowNote{
+    width: 30%;
+
+}
+
+.IncidentGridFilterDate{
+    width:80%;    
+    display: block;
+    height: calc(1.5em + 0.75rem + 2px);
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }

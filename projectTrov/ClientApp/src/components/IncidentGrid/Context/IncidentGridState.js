@@ -6,17 +6,30 @@ import {
     SET_LOADING,
     SET_ERROR,
     CLEAR_ERROR,
-    SEED_DATA
+    SEED_DATA,
+    FILTER_DATA,
+    CLEAR_FILTER,
+    SET_FILTER_DT_START,
+    SET_FILTER_DT_END,
+    CLEAR_FILTER_DT_START,
+    CLEAR_FILTER_DT_END,
+    SET_FILTER_VIN,
+    CLEAR_FILTER_VIN
 } from "./IncidentTypes";
 import axios from "axios";
 
 const IncidentGridState = (props)=>{
     const initialState ={
         Incidents: null,              //list containig all incidents
+        FilterVin: "",
+        FilteredIncidents: null,              
+        FilterStartDate: null,
+        FilterEndDate: null,
         ErrorText: null,            //error text to display
         Loading: true,              //state variable to control loading behavior
         ErrorPresent: false,        //state variable controlling error behavior
-        DataSeeded: false           //I am using this state to determine of the data is seeded or not
+        DataSeeded: false,           //I am using this state to determine of the data is seeded or not
+        FilteringPresent: false
     }
 
 
@@ -26,14 +39,18 @@ const IncidentGridState = (props)=>{
 const seedData = ()=>{
 
     const seedData = [
-        {Id : 0, Vin : "JTKDE177160124954", VinYear : "2006", MakeModel : "TOYOTA", Note : "Bumper crash"},
-        {Id : 0, Vin : "2GCEK13TX51128592", VinYear : "2005", MakeModel : "CHEVROLET", Note : "Rear end crash"},
-        {Id : 0, Vin : "3B6MC3667XM554105", VinYear : "1999", MakeModel : "DODGE", Note : "Broken window"},
-        {Id : 0, Vin : "5J8TB4H52FL000489", VinYear : "2015", MakeModel : "ACURA", Note : "Stolen"},
-        {Id : 0, Vin : "1GNEC13V44R194325", VinYear : "2004", MakeModel : "CHEVROLET", Note : "Fell off a bridge"}
+        {Id : 0, VinNumber : "JTKDE177160124954", Note : "Bumper crash", IncidentDate: "11-01-2020"},
+        {Id : 0, VinNumber : "2GCEK13TX51128592", Note : "Rear end crash", IncidentDate: "11-06-2020"},
+        {Id : 0, VinNumber : "3B6MC3667XM554105", Note : "Broken window", IncidentDate: "01-03-2020"},
+        {Id : 0, VinNumber : "5J8TB4H52FL000489", Note : "Stolen", IncidentDate: "01-02-2020"},
+        {Id : 0, VinNumber : "1GNEC13V44R194325",Note : "Fell off a bridge", IncidentDate: "01-01-2020"}
     ]
 
     //use axios to post a request to seed data into the in memory database so we have something to display on load
+    if(state.DataSeeded){
+        return;
+    }
+
     axios.post(
         "http://localhost:5000/Incident/Seed", seedData, {"Content-type":"application/json"})
     .then(function(response){
@@ -69,22 +86,123 @@ const clearError = ()=>{
     dispatch({type:CLEAR_ERROR});
 }
 
+const filterIncidents = ()=>{
+    debugger;
+    if(state.Loading){
+        return;
+    }
+    setLoading(true);
+    if(!state.DataSeeded){
+        setLoading(false);
+        return;
+    }
+    else{ 
+        let startTime = null;
+        let endTime = null;
+        let datesValid = false;
+        let incidentValid = false;
+        let vinValid = false;
+        let filteredIncidents = null;
 
+        if(state.Incidents !== undefined && state.Incidents !== null &&
+            state.Incidents.length  > 0){
+                incidentValid = true;
+        }
+
+        if(!incidentValid){
+            dispatch({type: CLEAR_FILTER});
+        }
+
+        if(state.FilterVin !== undefined && state.FilterVin !== null && typeof(state.FilterVin) == "string" && state.FilterVin != ""){
+                vinValid = true;
+            }
+
+        if(state.FilterStartDate !== undefined && state.FilterStartDate !== null && 
+            state.FilterEndDate !== undefined && state.FilterEndDate !== null &&
+            state.FilterEndDate.getTime != null && state.FilterStartDate.getTime != null){
+                startTime = state.FilterStartDate.getTime();
+                endTime = state.FilterEndDate.getTime();
+                if(endTime < startTime){
+                    setLoading(false);
+                    return;
+                }
+                else{
+                    datesValid = true;
+                }
+        }
+        
+        if(incidentValid){
+            if(vinValid && datesValid){
+                filteredIncidents = state.Incidents.filter(incident => incident.vinNumber.startsWith(state.FilterVin) && startTime <= (new Date(incident.incidentDate).getTime()) &&  (new Date(incident.incidentDate)).getTime() <= endTime);
+                dispatch({type: FILTER_DATA, FilteredIncidents: filteredIncidents});
+            }
+            else if(vinValid){
+                filteredIncidents = state.Incidents.filter(incident => incident.vinNumber.startsWith(state.FilterVin));
+                dispatch({type: FILTER_DATA, FilteredIncidents: filteredIncidents});
+            }
+            else if(datesValid){
+                filteredIncidents = state.Incidents.filter(incident => startTime <= (new Date(incident.incidentDate).getTime()) &&  (new Date(incident.incidentDate)).getTime() <= endTime);
+                dispatch({type: FILTER_DATA, FilteredIncidents: filteredIncidents});
+            }
+            else{
+                dispatch({type: CLEAR_FILTER});
+            }
+        }
+    }
+}
+
+
+    
+const setFilterStartDt = (startDate)=>{
+    dispatch({type:SET_FILTER_DT_START, FilterStartDate: startDate});
+}
+
+const setFilterEndDt = (endDate)=>{
+    dispatch({type:SET_FILTER_DT_END, FilterEndDate: endDate});
+}
+
+const setFilterVin = (vin)=>{
+    dispatch({type:SET_FILTER_VIN, FilterVin: vin});
+}
+
+const clearFilterStartDt = ()=>{
+    dispatch({type:CLEAR_FILTER_DT_START});
+}
+
+const clearFilterEndDt = ()=>{
+    dispatch({type:CLEAR_FILTER_DT_END});
+}
+
+const clearFilterVin = ()=>{
+    dispatch({type:CLEAR_FILTER_VIN});
+}
 
 
 //The provider allows us to tie state variabels in a wrapper, making them available for all the children
     return <IncidentGridContext.Provider
         value={{
             Incidents: state.Incidents,
+            FilterVin: state.FilterVin,
+            FilteredIncidents: state.FilteredIncidents,
+            FilterStartDate: state.FilterStartDate,
+            FilterEndDate: state.FilterEndDate,
             Loading: state.Loading,
             ErrorPresent: state.ErrorPresent,
             ErrorText: state.ErrorText,
             DataSeeded: state.DataSeeded,
+            FilteringPresent: state.FilteringPresent,
             setLoading,
             retrieveIncidents,
             setError,
             clearError,
-            seedData
+            seedData,
+            filterIncidents,
+            setFilterStartDt,
+            setFilterEndDt,
+            setFilterVin,
+            clearFilterStartDt,
+            clearFilterEndDt,
+            clearFilterVin
         }}
     >
         {props.children}

@@ -18,12 +18,12 @@ namespace projectTrov.Controllers
 
         private readonly ILogger<IncidentController> _logger;
         private readonly DefaultContext _context; 
-
+        private VinController _vinController;
         public IncidentController(ILogger<IncidentController> logger, DefaultContext context)
         {
             _logger = logger;
             _context = context;
-            
+            _vinController = new VinController(_context);
             
         }
 
@@ -44,6 +44,8 @@ namespace projectTrov.Controllers
         public async Task<int> SeedInitialData(IList<Incident> incidents)
         {
             foreach(Incident incident in incidents){
+                VIN targetVin = await _vinController.GetInsertVin(incident.VinNumber);
+                incident.Vin = targetVin;
                 _context.Incidents.Add(incident);
             }
 
@@ -65,8 +67,7 @@ namespace projectTrov.Controllers
                 return -1;
             }
             else{
-                VinController vinController = new VinController(_context);
-                VIN targetVin = await vinController.GetInsertVin(incident.VinNumber);
+                VIN targetVin = await _vinController.GetInsertVin(incident.VinNumber);
                 incident.Vin = targetVin;
                 _context.Incidents.Add(incident);
 
