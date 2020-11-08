@@ -23,7 +23,6 @@ namespace Context
                 {
                     db.HasKey(i=>i.Id)
                     .HasName("Id");
-
                     db.Property("Id")
                     .ValueGeneratedOnAdd();
 
@@ -31,10 +30,8 @@ namespace Context
 
                     db.Property(i=>i.Note);
 
+                    db.HasOne(v => v.Vin).WithMany(i => i.Incidents).HasForeignKey(i=> i.VinNumber);
 
-                    db.Property(i=>i.VinNumber);
-
-                    db.HasOne(v => v.Vin).WithOne().HasForeignKey<Incident>(d=>d.VinNumber);
                 });           
 
                 modelBuilder

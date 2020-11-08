@@ -28,7 +28,7 @@ namespace projectTrov
             //Injecting the in memory database with our Default Context as a databse structure
             services.AddDbContext<DefaultContext>( option=> option.UseInMemoryDatabase(databaseName: "database_name"));
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Serialize);;
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

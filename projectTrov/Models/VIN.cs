@@ -1,4 +1,6 @@
     
+using System.Collections.Generic;
+
     namespace AppModels{
 
         public class VIN
@@ -7,6 +9,7 @@
             public string Make {get;set;}
             public string Model {get;set;}
             public string VinYear{get;set;}
+            public virtual ICollection<Incident> Incidents {get;set;}
 
             public VIN(){
             }

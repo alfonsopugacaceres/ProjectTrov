@@ -14,17 +14,27 @@ import {
     CLEAR_FILTER_DT_START,
     CLEAR_FILTER_DT_END,
     SET_FILTER_VIN,
-    CLEAR_FILTER_VIN
+    CLEAR_FILTER_VIN,
+    SET_M_INCI_NOTE,
+    SET_N_INCI_VIN,
+    SET_N_INCI_DT
 } from "./IncidentTypes";
 import axios from "axios";
 
 const IncidentGridState = (props)=>{
     const initialState ={
+        Loading: true,
         Incidents: null,              //list containig all incidents
         FilterVin: "",
         FilteredIncidents: null,              
         FilterStartDate: null,
         FilterEndDate: null,
+        NewIncident:{
+            Id : 0,
+            Note : "",
+            IncidentDate: null,
+            VinNumber: ""
+        },
         ErrorText: null,            //error text to display
         Loading: true,              //state variable to control loading behavior
         ErrorPresent: false,        //state variable controlling error behavior
@@ -87,7 +97,6 @@ const clearError = ()=>{
 }
 
 const filterIncidents = ()=>{
-    debugger;
     if(state.Loading){
         return;
     }
@@ -152,6 +161,45 @@ const filterIncidents = ()=>{
 }
 
 
+const insertIncident = ()=>{
+    
+    if(state.Loading){
+        return;
+    }
+    setLoading(true);
+    if(!state.DataSeeded){
+        setLoading(false);
+        return;
+    }
+
+    let date = state.NewIncident.IncidentDate;
+    let dateString = (date.getMonth()+1)  + "-" + date.getDate() + "-" + date.getFullYear();
+    var newIncident = {
+        "Id" : 0,
+        "Note" : state.NewIncident.Note,
+        "IncidentDate": dateString,
+        "VinNumber": state.NewIncident.VinNumber,
+        "Vin" : null
+    }
+
+    axios.post(
+        "http://localhost:5000/Incident", newIncident, {"Content-type":"application/json"})
+    .then(function(res){
+
+        axios.get("http://localhost:5000/Incident")
+        .then(function(response){
+            dispatch({type:SET_INCIDENTS, payload: response});
+        })
+        .catch(function(error){
+            setError({ErrorText: "There was an issue retrieving data from the database"});
+        });
+    })
+    .catch(function(error){
+        setError({ErrorText: "There was an inserting new incident to the in memory database"});
+    });
+
+}
+
     
 const setFilterStartDt = (startDate)=>{
     dispatch({type:SET_FILTER_DT_START, FilterStartDate: startDate});
@@ -177,11 +225,27 @@ const clearFilterVin = ()=>{
     dispatch({type:CLEAR_FILTER_VIN});
 }
 
+const clearFilters = ()=>{
+    dispatch({type:CLEAR_FILTER});
+}
+
+const setNIncNote = (note)=>{
+    dispatch({type:SET_M_INCI_NOTE, Note: note})
+}
+const setNIncVin = (vin)=>{
+    dispatch({type:SET_N_INCI_VIN, VinNumber: vin})
+}
+const setNIncDate = (date)=>{
+    dispatch({type:SET_N_INCI_DT, IncidentDate: date})
+}
+
 
 //The provider allows us to tie state variabels in a wrapper, making them available for all the children
     return <IncidentGridContext.Provider
         value={{
+            Loading: state.Loading,
             Incidents: state.Incidents,
+            NewIncident: state.NewIncident,
             FilterVin: state.FilterVin,
             FilteredIncidents: state.FilteredIncidents,
             FilterStartDate: state.FilterStartDate,
@@ -202,7 +266,12 @@ const clearFilterVin = ()=>{
             setFilterVin,
             clearFilterStartDt,
             clearFilterEndDt,
-            clearFilterVin
+            clearFilterVin,
+            clearFilters,
+            setNIncNote,
+            setNIncVin,
+            setNIncDate,
+            insertIncident
         }}
     >
         {props.children}

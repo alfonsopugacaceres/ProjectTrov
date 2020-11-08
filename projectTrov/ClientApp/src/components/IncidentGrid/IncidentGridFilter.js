@@ -8,15 +8,18 @@ const IncidentGridFilter = ()=>{
 
     
     const {
-        Loading,
         FilterVin,
         FilterStartDate,
         FilterEndDate,
+        FilteringPresent,
         setFilterStartDt,
         setFilterEndDt,
         setFilterVin,
-        filterIncidents
+        filterIncidents,
+        clearFilters
     } = useContext(IncidentGridContext);
+
+    useEffect(()=>{},[FilteringPresent])
     
     return(
         <Container fluid={true}>
@@ -50,8 +53,11 @@ const IncidentGridFilter = ()=>{
                                 <Col md={2}>
                                     <DatePicker className="IncidentGridFilterDate" selected={FilterEndDate} onChange={date => {setFilterEndDt(date);}}></DatePicker>
                                 </Col>
-                                <Form.Group as={Col} controlId="CancelIncidentInsert">
+                                <Form.Group as={Col} md={1} controlId="SearchIncidentFilter">
                                     <Button variant="light" type="button" onClick={()=>{filterIncidents();}}>Search</Button>
+                                </Form.Group>
+                                <Form.Group as={Col} md={1} controlId="ClearIncidentFilter">
+                                    <Button variant="light" type="button" onClick={()=>{clearFilters();}}>Clear</Button>
                                 </Form.Group>
                             </Form.Group>
                         </Form>

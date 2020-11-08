@@ -2,7 +2,6 @@ import React, {useState, useContext, useEffect, Fragment} from "react";
 import {Row, Col, Container, Jumbotron, Form, Button} from "react-bootstrap";
 import PropTypes from "prop-types";
 import IncidentGridContext from "./Context/IncidentGridContext";
-import IncidentGridFilter from "./IncidentGridFilter";
 import IncidentGridBody from "./IncidentGridBody";
 import AppLoading from "../AppLoading/AppLoading";
 import "./IncidentGrid.css";
@@ -15,8 +14,8 @@ const IncidentGrid = ()=>{
     } = IncidentGrid;
     
     const {
-        Incidents,
         Loading,
+        Incidents,
         DataSeeded,
         retrieveIncidents,
         seedData} = useContext(IncidentGridContext);
@@ -30,33 +29,22 @@ const IncidentGrid = ()=>{
         else if(Incidents === null && Loading === true){
             retrieveIncidents();
         }
-    },[DataSeeded, Loading, Incidents]);//useEffect is tracking Loading and Incidents to determine whether or not to rerender
+    },[DataSeeded, Incidents]);//useEffect is tracking Loading and Incidents to determine whether or not to rerender
 
     return(
         <Container>
             <Row>
                 <Col md={12}>
                     <Jumbotron>
-                        <h1 className="IncidentHeader">{IncidentGridHeader}</h1>
+                        <h1 className="IncidentHeader">Incident Project</h1>
                     </Jumbotron>
                 </Col>
             </Row>
             <Row>
                 <Col md={12}>
-                    <IncidentGridFilter></IncidentGridFilter>
+                    <IncidentGridBody></IncidentGridBody>
                 </Col>
             </Row>
-            <Row>
-                <Col md={12}>
-                {
-                    (Loading)
-                    ?
-                    <AppLoading></AppLoading>
-                    :
-                    <IncidentGridBody></IncidentGridBody>
-                }
-            </Col>
-        </Row>
         </Container>
 
     );

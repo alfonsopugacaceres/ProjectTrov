@@ -2,6 +2,8 @@ import React, {useContext, useEffect} from "react";
 import {Container, Row, Col } from "react-bootstrap";
 import IncidentGridContext from "./Context/IncidentGridContext";
 import IcidentInsert from "./IncidentInsert";
+import IncidentGridFilter from "./IncidentGridFilter";
+import AppLoading from "../AppLoading/AppLoading";
 import "./IncidentGrid.css"
 
 
@@ -52,6 +54,7 @@ const IncidentGridRow = ({ IncidentData }) =>{
 const IncidentGridBody =()=>{
 
     const {
+        Loading,
         FilteredIncidents,
         FilteringPresent,
         Incidents
@@ -59,7 +62,7 @@ const IncidentGridBody =()=>{
 
     //force rerender if FilteringPresent changes value
     useEffect(()=>{}
-    ,[FilteringPresent])
+    ,[FilteringPresent, Loading])
 
     return(
         <Container fluid={true}>
@@ -68,25 +71,32 @@ const IncidentGridBody =()=>{
                     <Container fluid={true} className="IncidentLoading_show">
                         <Row>
                             <Col md={12}>
-                                <Container fluid={true}>
-                                    <IcidentInsert></IcidentInsert>
-                                </Container>
+                                <IncidentGridFilter></IncidentGridFilter>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md={12}>
+                                <IcidentInsert></IcidentInsert>
                             </Col>
                         </Row>
                         <Row>
                             <Col md={12}>
                                 <Container fluid={true}>
-                                <IncidentGridHeader></IncidentGridHeader>
+                                    <IncidentGridHeader></IncidentGridHeader>
                                     {
-                                        (FilteringPresent)
+                                        (Loading)
                                         ?
-                                        FilteredIncidents.map(
-                                            (Incident)=>(<IncidentGridRow key={Incident.id} IncidentData={Incident}></IncidentGridRow>)
-                                        )
+                                        <AppLoading />
                                         :
-                                        Incidents.map(
-                                            (Incident)=>(<IncidentGridRow key={Incident.id} IncidentData={Incident}></IncidentGridRow>)
-                                        )
+                                            (FilteringPresent)
+                                            ?
+                                            FilteredIncidents.map(
+                                                (Incident)=>(<IncidentGridRow key={Incident.id} IncidentData={Incident}></IncidentGridRow>)
+                                            )
+                                            :
+                                            Incidents.map(
+                                                (Incident)=>(<IncidentGridRow key={Incident.id} IncidentData={Incident}></IncidentGridRow>)
+                                            )
                                     }
                                 </Container>
                             </Col>
