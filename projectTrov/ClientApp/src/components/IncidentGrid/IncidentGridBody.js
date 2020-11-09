@@ -65,7 +65,7 @@ const IncidentGridBody =()=>{
     ,[FilteringPresent, Loading])
 
     return(
-        <Container fluid={true}>
+        <Container fluid={true} >
             <Row>
                 <Col md={12}>
                     <Container fluid={true} className="IncidentLoading_show">

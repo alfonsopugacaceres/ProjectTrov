@@ -1,18 +1,12 @@
-import React, {useState, useContext, useEffect, Fragment} from "react";
-import {Row, Col, Container, Jumbotron, Form, Button} from "react-bootstrap";
-import PropTypes from "prop-types";
+import React, {useContext, useEffect} from "react";
+import {Row, Col, Container, Jumbotron} from "react-bootstrap";
 import IncidentGridContext from "./Context/IncidentGridContext";
 import IncidentGridBody from "./IncidentGridBody";
-import AppLoading from "../AppLoading/AppLoading";
+import IncidentWarning from "./IncidentWarning";
 import "./IncidentGrid.css";
 
 const IncidentGrid = ()=>{
 
-    const {
-        IncidentGridHeader,
-        IncidentGridData
-    } = IncidentGrid;
-    
     const {
         Loading,
         Incidents,
@@ -42,6 +36,11 @@ const IncidentGrid = ()=>{
             </Row>
             <Row>
                 <Col md={12}>
+                    <IncidentWarning></IncidentWarning>
+                </Col>
+            </Row>
+            <Row>
+                <Col md={12}>
                     <IncidentGridBody></IncidentGridBody>
                 </Col>
             </Row>
@@ -49,21 +48,6 @@ const IncidentGrid = ()=>{
 
     );
 }
-
-/*
-IncidentGrid.propTypes  = {
-    IncidentGridHeader: PropTypes.string,
-    IncidentGridData: PropTypes.arrayOf(
-        PropTypes.shape({
-            Id: PropTypes.number,
-            Vin: PropTypes.string,
-            IncidentDate: PropTypes.string,
-            MakeModel: PropTypes.string,
-            VinYear: PropTypes.string
-        })
-    )
-}
-*/
 
 
 export {IncidentGrid};

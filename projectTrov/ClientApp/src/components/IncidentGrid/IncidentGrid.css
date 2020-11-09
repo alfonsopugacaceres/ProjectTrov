@@ -1,13 +1,10 @@
-.IncidentGrid{
-
-}
 
 .IncidentHeader{
     text-align: center;
 }
 
 .IncidentAddWrapper_show{
-    transition: width 1s ease-in, opacity 0.5s ease-in, height 2s ease-in;
+    transition: width 1s ease-in, opacity 0s ease-in, height 0.4s ease-in;
     opacity: 1;
     width: 100%;
     height: unset;
@@ -17,7 +14,7 @@
 }
 
 .IncidentAddWrapper_hide{
-    transition: width 1s ease-in, opacity 0.5s ease-in, height 1s ease-in;
+    transition: width 1s ease-in, opacity 0s ease-in, height 0.4s ease-in;
     opacity: 0;
     width: 0px;
     height: 0px;
@@ -25,10 +22,6 @@
 
 .IncidentAddWrapper_hide textarea{
     resize: none;
-}
-
-.IncidentSpinner{
-
 }
 
 .IncidentLoading_show{
@@ -95,4 +88,24 @@
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+
+
+.IncidentFilterWrapper_show{
+    transition: width 1s ease-in, opacity 0s ease-in, height 1s ease-in;
+    opacity: 1;
+    width: 100%;
+    height: unset;
+}
+.IncidentFilterWrapper_hide{
+    transition: width 1s ease-in, opacity 0s ease-in, height 1s ease-in;
+    opacity: 0;
+    width: 0px;
+    height: 0px;
+}
+
+.IncidentComponentSpacing{
+    margin-top:1%;
+    margin-bottom:1%;
 }

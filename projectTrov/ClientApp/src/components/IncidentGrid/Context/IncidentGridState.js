@@ -4,7 +4,6 @@ import IncidentGridReducer from "./IncidentGridReducer";
 import {
     SET_INCIDENTS,
     SET_LOADING,
-    SET_ERROR,
     CLEAR_ERROR,
     SEED_DATA,
     FILTER_DATA,
@@ -17,12 +16,17 @@ import {
     CLEAR_FILTER_VIN,
     SET_M_INCI_NOTE,
     SET_N_INCI_VIN,
-    SET_N_INCI_DT
+    SET_N_INCI_DT,
+    INSERT_DISPLAY_SET,
+    FILTER_DISPLAY_SET,
+    ADD_WARNING,
+    DELETE_WARNING,
+    CLEAR_ALL_WARNINGS
 } from "./IncidentTypes";
 import axios from "axios";
 
 const IncidentGridState = (props)=>{
-    const initialState ={
+    const initialState = {
         Loading: true,
         Incidents: null,              //list containig all incidents
         FilterVin: "",
@@ -35,11 +39,14 @@ const IncidentGridState = (props)=>{
             IncidentDate: null,
             VinNumber: ""
         },
+        Warnings:[],
         ErrorText: null,            //error text to display
-        Loading: true,              //state variable to control loading behavior
         ErrorPresent: false,        //state variable controlling error behavior
         DataSeeded: false,           //I am using this state to determine of the data is seeded or not
-        FilteringPresent: false
+        FilteringPresent: false,
+        InsertDisplay: false,
+        FilterDisplay: false,
+        WarningDisplay: false
     }
 
 
@@ -67,7 +74,8 @@ const seedData = ()=>{
         dispatch({type:SEED_DATA});
     })
     .catch(function(error){
-        setError({ErrorText: "There was an issue seeding data to the in memory database"});
+        setLoading(false);
+        addWarning({Id:"seedData", WarningHeading: "Failed to Seed data", WarningText: "Could not seed data into database"});
     });
 
 }
@@ -85,13 +93,11 @@ const retrieveIncidents = async ()=>{
         dispatch({type:SET_INCIDENTS, payload: response});
     })
     .catch(function(error){
-        setError({ErrorText: "There was an issue retrieving data from the database"});
+        setLoading(false);
+        addWarning({Id:"retrieveIncidents", WarningHeading: "Failed to Retrieve Incidents", WarningText: "Could not retrieve Incident Grid Data from database"});
     });
 }
 
-const setError = (errorText)=>{
-    dispatch({type:SET_ERROR, payload: errorText});
-}
 const clearError = ()=>{
     dispatch({type:CLEAR_ERROR});
 }
@@ -122,17 +128,18 @@ const filterIncidents = ()=>{
             dispatch({type: CLEAR_FILTER});
         }
 
-        if(state.FilterVin !== undefined && state.FilterVin !== null && typeof(state.FilterVin) == "string" && state.FilterVin != ""){
+        if(state.FilterVin !== undefined && state.FilterVin !== null && typeof(state.FilterVin) === "string" && state.FilterVin !== ""){
                 vinValid = true;
             }
 
         if(state.FilterStartDate !== undefined && state.FilterStartDate !== null && 
             state.FilterEndDate !== undefined && state.FilterEndDate !== null &&
-            state.FilterEndDate.getTime != null && state.FilterStartDate.getTime != null){
+            state.FilterEndDate.getTime !== null && state.FilterStartDate.getTime !== null){
                 startTime = state.FilterStartDate.getTime();
                 endTime = state.FilterEndDate.getTime();
                 if(endTime < startTime){
                     setLoading(false);
+                    addWarning({Id:"filterIncidentsDate", WarningHeading: "Filter Date Range Invalid", WarningText: "Please enter a valid date range to filter by"});
                     return;
                 }
                 else{
@@ -154,7 +161,8 @@ const filterIncidents = ()=>{
                 dispatch({type: FILTER_DATA, FilteredIncidents: filteredIncidents});
             }
             else{
-                dispatch({type: CLEAR_FILTER});
+                setLoading(false);
+                addWarning({Id:"filterIncidentsValid", WarningHeading: "No Valid Filter Criteria", WarningText: "Please enter a valid filter criteria"});
             }
         }
     }
@@ -169,6 +177,13 @@ const insertIncident = ()=>{
     setLoading(true);
     if(!state.DataSeeded){
         setLoading(false);
+        return;
+    }
+
+
+    if(state.NewIncident.Note === "" || state.NewIncident.IncidentDate === null || state.NewIncident.VinNumber === ""){
+        setLoading(false);
+        addWarning({Id:"insertIncident", WarningHeading: "Cannot Insert Incident", WarningText: "One of the required incident fields was missing"});
         return;
     }
 
@@ -191,11 +206,11 @@ const insertIncident = ()=>{
             dispatch({type:SET_INCIDENTS, payload: response});
         })
         .catch(function(error){
-            setError({ErrorText: "There was an issue retrieving data from the database"});
+            addWarning({Id:"insertIncidentRetrieve", WarningHeading: "Failed to Retrieve Incidents", WarningText: "Could not retrieve Incident Grid Data from database after insert"});
         });
     })
     .catch(function(error){
-        setError({ErrorText: "There was an inserting new incident to the in memory database"});
+        addWarning({Id:"insertIncidentCall", WarningHeading: "Failed to Insert into Database", WarningText: "There was an issue inserting Incident into the database"});
     });
 
 }
@@ -238,6 +253,41 @@ const setNIncVin = (vin)=>{
 const setNIncDate = (date)=>{
     dispatch({type:SET_N_INCI_DT, IncidentDate: date})
 }
+const setInsertDisplay = (val)=>{
+    dispatch({type:INSERT_DISPLAY_SET, InsertDisplay: val})
+}
+const setFilterDisplay = (val)=>{
+    dispatch({type:FILTER_DISPLAY_SET, FilterDisplay: val})
+}
+
+const addWarning = (warning)=>{
+
+    if(state.Warnings.length > 0){
+        var duplicateWarning = state.Warnings.filter(f=>f.Id === warning.Id);
+        if(duplicateWarning !== null){
+            return;
+        }
+    }
+    state.Warnings.push(warning);
+    dispatch({type:ADD_WARNING, Warnings: state.Warnings})
+}
+
+const deleteWarning = (Id)=>{
+
+    var filteredWarnings = state.Warnings.filter(f=>f.Id !== Id);
+    var display = (filteredWarnings.length > 0) ? true : false;
+    debugger;
+
+    dispatch({type:DELETE_WARNING, Warnings: filteredWarnings, WarningDisplay: display})
+}
+
+const clearWarnings = ()=>{
+
+    dispatch({type:CLEAR_ALL_WARNINGS})
+}
+
+
+
 
 
 //The provider allows us to tie state variabels in a wrapper, making them available for all the children
@@ -246,18 +296,20 @@ const setNIncDate = (date)=>{
             Loading: state.Loading,
             Incidents: state.Incidents,
             NewIncident: state.NewIncident,
+            Warnings: state.Warnings,
             FilterVin: state.FilterVin,
             FilteredIncidents: state.FilteredIncidents,
             FilterStartDate: state.FilterStartDate,
             FilterEndDate: state.FilterEndDate,
-            Loading: state.Loading,
             ErrorPresent: state.ErrorPresent,
             ErrorText: state.ErrorText,
             DataSeeded: state.DataSeeded,
             FilteringPresent: state.FilteringPresent,
+            InsertDisplay: state.InsertDisplay,
+            FilterDisplay: state.FilterDisplay,
+            WarningDisplay: state.WarningDisplay,
             setLoading,
             retrieveIncidents,
-            setError,
             clearError,
             seedData,
             filterIncidents,
@@ -271,7 +323,12 @@ const setNIncDate = (date)=>{
             setNIncNote,
             setNIncVin,
             setNIncDate,
-            insertIncident
+            insertIncident,
+            setInsertDisplay,
+            setFilterDisplay,
+            addWarning,
+            deleteWarning,
+            clearWarnings
         }}
     >
         {props.children}

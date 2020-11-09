@@ -1,6 +1,5 @@
 export const SET_INCIDENTS = "SET_INCIDENTS";
 export const SET_LOADING = "SET_LOADING";
-export const SET_ERROR = "SET_ERROR";
 export const CLEAR_ERROR = "CLEAR_ERROR";
 export const SEED_DATA = "SEED_DATA";
 export const FILTER_DATA = "FILTER_DATA";
@@ -16,3 +15,8 @@ export const SET_NEW_INCIDENT = "SET_NEW_INCIDENT";
 export const SET_N_INCI_DT = "SET_N_INCI_DT";
 export const SET_N_INCI_VIN = "SET_N_INCI_VIN";
 export const SET_M_INCI_NOTE = "SET_M_INCI_NOTE";
+export const INSERT_DISPLAY_SET = "INSERT_DISPLAY_SET";
+export const FILTER_DISPLAY_SET = "FILTER_DISPLAY_SET";
+export const ADD_WARNING = "ADD_WARNING";
+export const DELETE_WARNING = "DELETE_WARNING";
+export const CLEAR_ALL_WARNINGS = "CLEAR_ALL_WARNINGS";

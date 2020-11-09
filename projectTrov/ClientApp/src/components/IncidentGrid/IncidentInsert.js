@@ -1,5 +1,5 @@
-import React, {useState, useContext, Fragment} from "react";
-import {Container, Row, Col, Form, Button} from "react-bootstrap";
+import React, {useEffect, useContext, Fragment} from "react";
+import {Container, Col, Form, Button} from "react-bootstrap";
 import IncidentGridContext from "./Context/IncidentGridContext";
 import DatePicker  from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,10 +9,12 @@ const IncidentInsert = ()=>{
     
     const {
         NewIncident,
+        InsertDisplay,
         insertIncident,
         setNIncNote,
         setNIncVin,
-        setNIncDate
+        setNIncDate,
+        setInsertDisplay
     } = useContext(IncidentGridContext);
 
     const{
@@ -31,20 +33,21 @@ const IncidentInsert = ()=>{
         setNIncVin(value);
     }
 
-    const [displayWrapper, setDisplay] = useState(false);
+    useEffect(()=>{},
+    [InsertDisplay])
 
     return(
         <Fragment>
-            <Container fluid={true} className={(displayWrapper) ? "IncidentAddWrapper_hide" : "IncidentAddWrapper_show"}>
+            <Container fluid={true} className={(InsertDisplay) ? "IncidentAddWrapper_hide" : "IncidentAddWrapper_show"}>
                 <Form>
                     <Form.Row>
                         <Form.Group as={Col} controlId="ActivateInsertControl">
-                            <Button variant="light" type="button" onClick={()=>{setDisplay(!displayWrapper)}}>Add Incident</Button>
+                            <Button variant="secondary" type="button" onClick={()=>{setInsertDisplay(true)}}>Add Incident</Button>
                         </Form.Group>
                     </Form.Row>
                 </Form>
             </Container>
-            <Container fluid={true} className={(displayWrapper) ? "IncidentAddWrapper_show" : "IncidentAddWrapper_hide"}>
+            <Container fluid={true} className={(InsertDisplay) ? "IncidentAddWrapper_show" : "IncidentAddWrapper_hide"}>
                 <Form>
                     <Form.Row>
                         <Form.Group as={Col} controlId="IncidentVin">
@@ -67,10 +70,10 @@ const IncidentInsert = ()=>{
 
                     <Form.Row>
                         <Form.Group as={Col} controlId="AcceptIncidentInsert">
-                            <Button variant="light" type="button" onClick={()=>{insertIncident();}}>Insert</Button>
+                            <Button variant="secondary" type="button" onClick={()=>{insertIncident();}}>Insert</Button>
                         </Form.Group>
                         <Form.Group as={Col} controlId="CancelIncidentInsert">
-                            <Button variant="light" type="button" onClick={()=>{setDisplay(!displayWrapper)}}>Cancel</Button>
+                            <Button variant="secondary" type="button" onClick={()=>{setInsertDisplay(false)}}>Cancel</Button>
                         </Form.Group>
                     </Form.Row>
                 </Form>
