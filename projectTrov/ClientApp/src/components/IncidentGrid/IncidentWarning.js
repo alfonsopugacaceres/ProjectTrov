@@ -4,7 +4,6 @@ import {Container, Row, Col, Alert} from "react-bootstrap";
 
 
 const Warning = ({Id, WarningText, WarningHeading, Remove})=>{
-    debugger;
     return(
         <Row>
             <Col md={12}>
@@ -30,7 +29,6 @@ const IncidentWarning = ()=>{
 
     useEffect(()=>{},[Warnings, WarningDisplay])
 
-    debugger;
     return(
     <Container fluid={true}>
     {

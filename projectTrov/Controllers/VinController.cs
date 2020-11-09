@@ -53,6 +53,9 @@ namespace projectTrov.Controllers
             if(targetVin == null)
             {
                 targetVin = await RetrieveVinData(vin);
+                if(targetVin == null){
+                    return null;
+                }
                 _context.Vins.Add(targetVin);
                     
                 try
@@ -126,6 +129,9 @@ namespace projectTrov.Controllers
                             newVIn.VinYear = string.Empty;
                     break;
                 }
+            }
+            if(newVIn.Make == null || newVIn.Model == null || newVIn.VinYear == null){
+                return null;
             }
             return newVIn;
         }

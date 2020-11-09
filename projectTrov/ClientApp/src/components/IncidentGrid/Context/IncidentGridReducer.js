@@ -24,7 +24,6 @@ import {
 
 
 export default (state, action)=>{
-    debugger;
     switch(action.type){
         case SET_INCIDENTS:
             return {...state, Incidents: action.payload.data, Loading: false};

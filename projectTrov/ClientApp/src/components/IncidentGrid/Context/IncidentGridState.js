@@ -200,7 +200,9 @@ const insertIncident = ()=>{
     axios.post(
         "http://localhost:5000/Incident", newIncident, {"Content-type":"application/json"})
     .then(function(res){
-
+        if(res.data === 0){
+            addWarning({Id:"insertIncidentFailed", WarningHeading: "Vin was not valid", WarningText: "Not a valid VIN, please try again"});
+        }
         axios.get("http://localhost:5000/Incident")
         .then(function(response){
             dispatch({type:SET_INCIDENTS, payload: response});
@@ -276,7 +278,6 @@ const deleteWarning = (Id)=>{
 
     var filteredWarnings = state.Warnings.filter(f=>f.Id !== Id);
     var display = (filteredWarnings.length > 0) ? true : false;
-    debugger;
 
     dispatch({type:DELETE_WARNING, Warnings: filteredWarnings, WarningDisplay: display})
 }

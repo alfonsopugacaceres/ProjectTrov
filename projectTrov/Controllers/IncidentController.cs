@@ -84,6 +84,10 @@ namespace projectTrov.Controllers
             }
             else{
                 VIN targetVin = await _vinController.GetInsertVin(incident.VinNumber);
+
+                if(targetVin == null){
+                    return 0;
+                }
                 _context.Incidents.Add(incident);
 
                 try
