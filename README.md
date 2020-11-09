@@ -10,10 +10,10 @@ This Project uses the asp.net react project template to create an application th
 5. Using command "**npm start**" from the ClientApp folder will launch the React applciation for use
 
 ## Features and Actions:
--When first launching the application a pre-created list of Incidents will be uploaded into the server
--Using the Add Incident Button a Component will allow you to enter new incidents
--Using the filter buttong will allow you to filter the grid
--The database uses two controllers, IncidentController to manage Incidents and VinController to manage VIN numbers
--The VinController contains a call to a secondary api used to validate and retrieve additional data based on VIN numbers
--The extra data which the VinController can retrieve is easily espandable using the enumeration in the class, just add the variable id
+1. When first launching the application a pre-created list of Incidents will be uploaded into the server
+2. Using the Add Incident Button a Component will allow you to enter new incidents
+3. Using the filter buttong will allow you to filter the grid by using Vin number and/or with a date range
+4. The database uses two controllers, IncidentController to manage Incidents and VinController to manage VIN numbers
+5. The VinController contains a call to a secondary api used to validate and retrieve additional data based on VIN numbers
+6. The extra data which the VinController can retrieve is easily espandable using the enumeration in the class, just add the variable id
 
